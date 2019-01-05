@@ -5,11 +5,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         let date = new Date();
         let dateStr = date.toString();
         let entryStr = title + '  ' + dateStr;
-        console.log(entryStr);
-        chrome.storage.sync.set({entry: entryStr}, function() {
+        let entry = {};
+        entry[dateStr] = entryStr;
+        chrome.storage.local.set(entry, function() {
             console.log('The new entry is: ' + entryStr);
             sendResponse({title: title});
         });
-
     }
 });
