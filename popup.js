@@ -19,10 +19,6 @@ trackButton.addEventListener('click', function() {
                 }
                 document.body.appendChild(listElem);
                     
-
-//                let headerElem = document.createElement('h1');
-//                headerElem.textContent = result;
-//                document.body.appendChild(headerElem);
 //                chrome.storage.local.clear(function() {
 //                    var error = chrome.runtime.lastError;
 //                    if (error) {
