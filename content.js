@@ -1,10 +1,8 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
-    if (request.greeting == "hello") {
+    if (request.message == "Track button clicked") {
         
-        // instead of getting header, get: zip, area, rooms, yearOfConstruction, price
-        let header = document.getElementsByTagName('h1')[0];
-        let title = header.textContent;
+        let entryValue = [];
 
         let date = new Date();
 	let day = date.getDate();
@@ -30,17 +28,40 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         }
 
         let dateStr = day + '.' + month + '.' + year + '   ' + hours + ':' + minutes + ' Uhr';
+        entryValue.push(dateStr);
 
-        // instead of entryStr, let entryValue = [dateStr, zip, area, rooms, yearOfConstruction, price
-        let entryStr = dateStr + ' -- ' + title;
+        let locationElem = document.querySelector('.location');
+        let locationStr = locationElem.querySelector('span').textContent;
+        let zip = locationStr.trim().substring(0, 5);
+        entryValue.push(zip);
+
+        let areaElem = document.querySelectorAll('.hardfact')[1];
+        let areaStr = areaElem.textContent;
+        let area = areaStr.trim().substring(0, areaStr.indexOf(' '));
+        entryValue.push(area);
+
+        let roomsElem = document.querySelectorAll('.hardfact.rooms')[1];
+        let roomsStr = roomsElem.textContent;
+        let rooms = roomsStr.trim().substring(0, roomsStr.indexOf(' '));
+        entryValue.push(rooms);
+
+        let priceElem = document.querySelectorAll('.hardfact')[0];
+        let priceStr = priceElem.textContent;
+        let price = priceStr.trim().substring(0, priceStr.indexOf(' '));
+        
+        if (!isNaN(parseInt(price[0], 10))) {
+            entryValue.push(price + ' \u20AC');
+        } else {
+            entryValue.push('Auf Anfrage');
+        }
+        
         let entry = {};
+        entry[dateStr] = entryValue;
 
-        // entry[dateStr] = entryValue;
-        entry[dateStr] = entryStr;
         chrome.storage.local.set(entry, function() {
-            console.log('The new entry is: ' + entryStr);
-            sendResponse({title: title}); // replace with line 44?
+            console.log('The new entry is: ' + entryValue);
         });
-        // sendResponse({currentDate: dateStr}); -- ???
+
+        sendResponse({currentDate: dateStr});
     }
 });
