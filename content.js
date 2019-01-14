@@ -45,15 +45,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         let rooms = roomsStr.trim().substring(0, roomsStr.indexOf(' '));
         entryValue.push(rooms);
 
-        let priceElem = document.querySelectorAll('.hardfact')[0];
+        let priceElem = document.querySelectorAll('.hardfact strong')[0];
         let priceStr = priceElem.textContent;
-        let price = priceStr.trim().substring(0, priceStr.indexOf(' '));
+//        let price = priceStr.trim().substring(0, priceStr.indexOf(' '));
+
+        entryValue.push(priceStr);
+
         
-        if (!isNaN(parseInt(price[0], 10))) {
-            entryValue.push(price + ' \u20AC');
-        } else {
-            entryValue.push('Auf Anfrage');
-        }
+//        if (!isNaN(parseInt(price[0], 10))) {
+//            entryValue.push(price + ' \u20AC');
+//        } else {
+//            entryValue.push('Auf Anfrage');
+//        }
         
         let entry = {};
         entry[dateStr] = entryValue;
