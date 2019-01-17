@@ -12,7 +12,8 @@
         "matches": [
           "https://www.immowelt.de/*"
         ],
-        "js": ["jquery-3.3.1.min.js", "content.js"]
+        "js": ["jquery-3.3.1.min.js", "content.js"],
+        "css": ["main.css"]
       }
     ],
     "page_action": {
