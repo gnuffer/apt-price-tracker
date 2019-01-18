@@ -1,5 +1,6 @@
 // creates date string for current date
-function getDateStr() {
+function makeDateStr() {
+
     let date = new Date();
     let day = date.getDate();
     let month = date.getMonth() + 1;
@@ -10,15 +11,12 @@ function getDateStr() {
     if (day < 10) {
         day = '0' + day;
     }
-
     if (month < 10) {
         month = '0' + month;
     }
-
     if (hours < 10) {
         hours = '0' + hours;
     }
-
     if (minutes < 10) {
         minutes = '0' + minutes;
     }
@@ -30,7 +28,7 @@ function getDateStr() {
 // checks if two arrays match at indices 1, 2, 3 (here: zip code, area, number of rooms)
 function arraysMatch(arr1, arr2) {
     if (arr1.length !== arr2.length) {
-        return false;
+        throw new Error('Arrays of unequal length cannot be compared!');
     } else {
         for (let i = 1; i < 4; i++) {
             if (arr1[i] !== arr2[i]) {
@@ -56,9 +54,8 @@ window.onload = function() {
 
         let listItem = listItems[i];
 
-        // creates an array. Uses 0 as dummy first element to ensure that the
-        // elements of the array lign up with the elements of the arrays in 
-        // chrome storage
+        // Uses 0 as dummy initial element to ensure that the elements of itemArray
+        // lign up with the elements of the arrays in chrome storage
         let itemArray = [0];
 
         // finds zip code and pushes it onto itemArray
@@ -80,7 +77,7 @@ window.onload = function() {
         let priceStr = hardFacts[i * 3].textContent;
         let price = priceStr.substring(58, priceStr.indexOf(' ', 58));
 
-        // checks if price string starts with a number
+        // checks if price string starts with a digit
         if (!isNaN(parseInt(price[0], 10))) {
             itemArray.push(price);
         } else {
@@ -91,14 +88,14 @@ window.onload = function() {
         searchResults.push(itemArray);
     };
 
-    // retrieves everything stored in chrome.storage
+    // retrieves the entire storage object from chrome.storage
     chrome.storage.local.get(null, function(result) {
 
         // inspect result object retrieved from storage
         console.log('Retrieved from storage: ' + result);
         console.log('Retrieved from storage and stringified: ' + JSON.stringify(result));
 
-        // creates an array containing the property values (arrays) of the result object retrieved from chrome storage
+        // creates an array containing the property values (arrays) of the object retrieved from chrome.storage
         let storageResults = [];
         for (let date in result) {
             storageResults.push(result[date]);
@@ -111,58 +108,65 @@ window.onload = function() {
         // inspect searchResults
         console.log('The stringified searchResults are ' + JSON.stringify(searchResults));
 
-        // checks, for each item in searchResults, whether it is in storageResults.  If so, it pushes its index onto the myItems array
+        // checks, for each apartment in searchResults, whether it is also in storageResults.  If so, it pushes its index onto the myItems array.
         let myItems = [];
-        searchResults.forEach(function(item, index) {
-            storageResults.forEach(function(elem, ind) {
+        searchResults.forEach(function(item, itemIndex) {
+            storageResults.forEach(function(elem, elemIndex) {
                 if (arraysMatch(item, elem)) {
-                    myItems.push(index);
+                    myItems.push(itemIndex);
                 } else {
-                    console.log('searchResult ' + index + ' didn\'t match storageResult ' + ind);
+                    console.log('searchResult ' + itemIndex + ' didn\'t match storageResult ' + elemIndex);
                 }
             });
         });
 
         // inspect myItems array
-        console.log('The items in searchResults that are also in storageResults have one of the indices in the array ' + JSON.stringify(myItems));
+        console.log('The items in searchResults that are also in storageResults have one of the indices in ' + JSON.stringify(myItems));
 
-        // highlights the divs with index in myItems on the search results page
+        // highlights the search results with index in myItems on the search results page
         myItems.forEach(function(index) {
             listItems[index].style.backgroundColor = 'red';
         });
     });
 };
 
-// listens for the message sent when button on popup is clicked (see popup.js)
+// listens for the message sent by popup.js when popup button is clicked
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     if (request.message == "Track button clicked") {
 
         let entryValue = [];
 
-        let dateStr = getDateStr();
+        //creates date string and pushes it onto entryValue array
+        let dateStr = makeDateStr();
         entryValue.push(dateStr);
+
         // let selectors = [{selector: '.location', subStr: 
+
+        //finds zip code and pushes it onto entryValue array
         let locationElem = document.querySelector('.location');
         let locationStr = locationElem.querySelector('span').textContent;
         let zip = locationStr.trim().substring(0, 5);
         entryValue.push(zip);
 
+        // finds area and pushes it onto entryValue array
         let areaElem = document.querySelectorAll('.hardfact')[1];
         let areaStr = areaElem.textContent;
         let area = areaStr.trim().substring(0, areaStr.trim().indexOf(' '));
         entryValue.push(area);
 
+        // finds room number and pushes it onto entryValue array
         let roomsElem = document.querySelectorAll('.hardfact.rooms')[1];
         let roomsStr = roomsElem.textContent;
         let rooms = roomsStr.trim().substring(0, roomsStr.trim().indexOf('\n'));
         entryValue.push(rooms);
 
+        // finds price and pushes it onto entryValue array
         let priceElem = document.querySelectorAll('.hardfact strong')[0];
         let priceStr = priceElem.textContent;
         let price = priceStr.trim().substring(0, priceStr.trim().indexOf(' '));
 
-        // checks if price string begins with a number character
+        // checks if price string begins with a digit
         if (!isNaN(parseInt(price[0], 10))) {
             entryValue.push(price);
         } else {

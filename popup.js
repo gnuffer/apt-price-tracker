@@ -4,7 +4,7 @@ let trackButton = document.getElementById('trackBtn');
 // checks if a given array matches the current array at indices 1, 2, 3 (here: zip code, area, number of rooms)
 function matchesCurrent(array, current) {
     if (array.length !== current.length) {
-        return false;
+        throw new Error('Arrays of unequal length cannot be compared!');
     } else {
         for (let i = 1; i < 4; i++) {
             if (array[i] !== current[i]) {
@@ -37,10 +37,10 @@ trackButton.addEventListener('click', function() {
                 for (let date in result) {
                     if (result.hasOwnProperty(date) && matchesCurrent(result[date], current)) {
                         let listItem = document.createElement('li');
-                        // creates date -  price entry to be displayed in popup
+                        // creates date - price entry to be displayed in popup
                         let listItemTextContent = result[date][0] + ' -- ' + result[date][4];
 
-                        // checks if price string starts with a number character.  If so, appends the euro symbol
+                        // checks if price string starts with a digit.  If so, it appends the euro symbol
                         if (!isNaN(parseInt(result[date][4][0], 10))) {
                             listItemTextContent += ' \u20AC';
                         } 
