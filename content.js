@@ -24,20 +24,38 @@ function makeDateStr() {
     let dateStr = day + '.' + month + '.' + year + '   ' + hours + ':' + minutes + ' Uhr';
     return dateStr;
 }
-
 // checks if two arrays match at indices 1, 2, 3 (here: zip code, area, number of rooms)
 function arraysMatch(arr1, arr2) {
-    if (arr1.length !== arr2.length) {
-        throw new Error('Arrays of unequal length cannot be compared!');
-    } else {
-        for (let i = 1; i < 4; i++) {
-            if (arr1[i] !== arr2[i]) {
-                return false;
-            }
+    try {
+        if (arr1.length !== arr2.length) {
+            throw ('Arrays of unequal length cannot be compared!');
         }
-        return true;
+    } catch(e) {
+        console.log(e);
     }
+    for (let i = 1; i < 4; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+    return true;
 }
+
+// checks if two arrays match at indices 1, 2, 3 (here: zip code, area, number of rooms)
+// function arraysMatch(arr1, arr2) {
+//     if (arr1.length !== arr2.length) {
+//         // throw new Error('Arrays of unequal length cannot be compared!');
+//         console.log('Arrays of unequal length cannot be compared!');
+//         return false;
+//     } else {
+//         for (let i = 1; i < 4; i++) {
+//             if (arr1[i] !== arr2[i]) {
+//                 return false;
+//             }
+//         }
+//         return true;
+//     }
+// }
 
 // gets the items listed on the search results page
 let listItems = document.getElementsByClassName('listitem clear relative js-listitem');
