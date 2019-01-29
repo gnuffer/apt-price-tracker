@@ -3,13 +3,16 @@ let trackButton = document.getElementById('trackBtn');
 
 // checks if a given array matches the current array at indices 1, 2, 3 (here: zip code, area, number of rooms)
 function matchesCurrent(array, current) {
-    try {
-        if (array.length !== current.length) {
-            throw ('Arrays of unequal length cannot be compared!');
-        }
-    } catch (e) {
-        console.log(e);
-    }
+//    try {
+//        if (array.length !== current.length) {
+//            throw ('Arrays of unequal length cannot be compared!');
+//        }
+//    } catch (e) {
+//        console.log(e);
+//    }
+    if (array.length !== current.length) {
+        throw new Error('Arrays of unequal length cannot be compared!');
+    } 
     for (let i = 1; i < 4; i++) {
         if (array[i] !== current[i]) {
             return false;
@@ -17,22 +20,6 @@ function matchesCurrent(array, current) {
     }
     return true;
 }
-
-// checks if a given array matches the current array at indices 1, 2, 3 (here: zip code, area, number of rooms)
-// function matchesCurrent(array, current) {
-//     if (array.length !== current.length) {
-//         // throw new Error('Arrays of unequal length cannot be compared!');
-//         console.log('Arrays of unequal length cannot be compared!');
-//         return false;
-//     } else {
-//         for (let i = 1; i < 4; i++) {
-//             if (array[i] !== current[i]) {
-//                 return false;
-//             }
-//         }
-//         return true;
-//     }
-// }
 
 // listens for clicks on the 'Track price' button of popup
 trackButton.addEventListener('click', function() {

@@ -24,6 +24,22 @@ function makeDateStr() {
     let dateStr = day + '.' + month + '.' + year + '   ' + hours + ':' + minutes + ' Uhr';
     return dateStr;
 }
+// checks if two arrays match at indices 1, 2, 3 (here: zip code, area, number of rooms)
+// function arraysMatch(arr1, arr2) {
+//     try {
+//         if (arr1.length !== arr2.length) {
+//             throw ('Arrays of unequal length cannot be compared!');
+//         }
+//     } catch(e) {
+//         console.log(e);
+//     }
+//     for (let i = 1; i < 4; i++) {
+//         if (arr1[i] !== arr2[i]) {
+//             return false;
+//         }
+//     }
+//     return true;
+// }
 
 //  checks if two arrays match at indices 1, 2, 3 (here: zip code, area, number of rooms)
 function arraysMatch(arr1, arr2) {
@@ -45,68 +61,47 @@ let len = listItems.length;
 // gets the 'hard facts' (zip code, area, number of rooms, price) from the search results page
 let hardFacts = document.getElementsByClassName('hardfact');
 
-function ListItemObject(index) {
-    this.zip = {
-        selectorStr: listItems[index].getElementsByClassName('listlocation')[0].textContent,
-        getSubStr: function() {
-            return this.selectorStr.trim().substring(0, 5);
-        },
-        getValue: function() {
-            return this.getSubStr();
-        }
-    };
-    this.area = {
-        selectorStr: hardFacts[index * 3 + 1].textContent,
-        getSubStr: function() {
-            return this.selectorStr.substring(36, this.selectorStr.indexOf(' ', 36));
-        },
-        getValue: function() {
-            return this.getSubStr();
-        }
-    };
-    this.rooms = {
-        selectorStr: hardFacts[index * 3 + 2].textContent,
-        getSubStr: function() {
-            return this.selectorStr.substring(26, this.selectorStr.indexOf(' ', 26));
-        },
-        getValue: function() {
-            return this.getSubStr();
-        }
-    };
-    this.price = {
-        selectorStr: hardFacts[index * 3].textContent,
-        getSubStr: function() {
-            return this.selectorStr.substring(58, this.selectorStr.indexOf(' ', 58));
-        },
-        getValue: function() {
-            if (!isNaN(parseInt(this.getSubStr()[0], 10))) {
-                return this.getSubStr();
-            } else {
-                return 'Auf Anfrage';
-            }
-        }
-    };
-}
-
 window.onload = function() {
+
     let searchResults = [];
 
     for (let i = 0; i < len; i++) {
-        let listItemObject = new ListItemObject(i);
+
+        let listItem = listItems[i];
 
         // Uses 0 as dummy initial element to ensure that the elements of itemArray
         // lign up with the elements of the arrays in chrome storage
         let itemArray = [0];
 
-        for (let key in listItemObject) {
-            if (listItemObject.hasOwnProperty(key)) {
-                itemArray.push(listItemObject[key].getValue());
-            }
+        // finds zip code and pushes it onto itemArray
+        let locationStr = listItem.getElementsByClassName('listlocation')[0].textContent;
+        let zip = locationStr.trim().substring(0, 5); 
+        itemArray.push(zip);
+
+        // finds area and pushes it onto itemArray
+        let areaStr = hardFacts[i * 3 + 1].textContent;
+        let area = areaStr.substring(36, areaStr.indexOf(' ', 36));
+        itemArray.push(area);
+
+        // finds number of rooms and pushes it onto itemArray
+        let roomsStr = hardFacts[i * 3 + 2].textContent;
+        let rooms = roomsStr.substring(26, roomsStr.indexOf(' ', 26));
+        itemArray.push(rooms);
+
+        // finds price and pushes it onto itemArray
+        let priceStr = hardFacts[i * 3].textContent;
+        let price = priceStr.substring(58, priceStr.indexOf(' ', 58));
+
+        // checks if price string starts with a digit
+        if (!isNaN(parseInt(price[0], 10))) {
+            itemArray.push(price);
+        } else {
+            itemArray.push('Auf Anfrage');
         }
 
         // pushes itemArray onto searchResults
         searchResults.push(itemArray);
-    }
+    };
 
     // retrieves the entire storage object from chrome.storage
     chrome.storage.local.get(null, function(result) {
@@ -153,7 +148,7 @@ window.onload = function() {
 
         // highlights the search results with index in myItems on the search results page
         myItems.forEach(function(index) {
-            listItems[index].style.backgroundColor = '#FF0000';
+            listItems[index].style.backgroundColor = 'red';
         });
     });
 };
@@ -169,55 +164,35 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         let dateStr = makeDateStr();
         entryValue.push(dateStr);
 
-        let entryObject = {
-            zip: {
-                selectorStr: document.querySelector('.location span').textContent,
-                getSubStr: function() {
-                    return this.selectorStr.substring(0, 5);
-                },
-                getValue: function() {
-                    return this.getSubStr();
-                }
-            },
-            area: {
-                selectorStr: document.querySelectorAll('.hardfact')[1].textContent,
-                getSubStr: function() {
-                    return this.selectorStr.substr(0, this.selectorStr.indexOf(' '));
-                },
-                getValue: function() {
-                    return this.getSubStr();
-                }
-            },
-            rooms: {
-                selectorStr: document.querySelectorAll('.hardfact.rooms')[1].textContent,
-                getSubStr: function() {
-                    return this.selectorStr.trim().substr(0, this.selectorStr.trim().indexOf('\n'));
-                },
-                getValue: function() {
-                    return this.getSubStr();
-                }
-            },
-            price: {
-                selectorStr: document.querySelectorAll('.hardfact strong')[0].textContent,
-                getSubStr: function() {
-                    return this.selectorStr.substr(0, this.selectorStr.indexOf(' '));
-                },
-                getValue: function() {
-                    if (!isNaN(parseInt(this.getSubStr()[0], 10))) {
-                        return this.getSubStr();
-                    } else {
-                        return 'Auf Anfrage';
-                    }
-                }
-            }
-        };
+        // finds zip code and pushes it onto entryValue array
+        let locationElem = document.querySelector('.location');
+        let locationStr = locationElem.querySelector('span').textContent;
+        let zip = locationStr.trim().substring(0, 5);
+        entryValue.push(zip);
 
-        for (let key in entryObject) {
-            if (entryObject.hasOwnProperty(key)) {
-                entryValue.push(entryObject[key].getValue());
-            }
+        // finds area and pushes it onto entryValue array
+        let areaElem = document.querySelectorAll('.hardfact')[1];
+        let areaStr = areaElem.textContent;
+        let area = areaStr.trim().substring(0, areaStr.trim().indexOf(' '));
+        entryValue.push(area);
+
+        // finds room number and pushes it onto entryValue array
+        let roomsElem = document.querySelectorAll('.hardfact.rooms')[1];
+        let roomsStr = roomsElem.textContent;
+        let rooms = roomsStr.trim().substring(0, roomsStr.trim().indexOf('\n'));
+        entryValue.push(rooms);
+
+        // finds price and pushes it onto entryValue array
+        let priceElem = document.querySelectorAll('.hardfact strong')[0];
+        let priceStr = priceElem.textContent;
+        let price = priceStr.trim().substring(0, priceStr.trim().indexOf(' '));
+
+        // checks if price string begins with a digit
+        if (!isNaN(parseInt(price[0], 10))) {
+            entryValue.push(price);
+        } else {
+            entryValue.push('Auf Anfrage');
         }
-
 
         let entry = {};
         entry[dateStr] = entryValue;
