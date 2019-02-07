@@ -21,15 +21,12 @@ function makeDateStr() {
         minutes = '0' + minutes;
     }
 
-    let dateStr = day + '.' + month + '.' + year + '   ' + hours + ':' + minutes + ' Uhr';
+    let dateStr = day + '.' + month + '.' + year + ' ' + hours + ':' + minutes + ' Uhr';
     return dateStr;
 }
 
 //  checks if two arrays match at indices 1, 2, 3 (here: zip code, area, number of rooms)
 function arraysMatch(arr1, arr2) {
-    if (arr1.length !== arr2.length) {
-        throw new Error('Arrays of unequal length cannot be compared!');
-    } 
     for (let i = 1; i < 4; i++) {
         if (arr1[i] !== arr2[i]) {
             return false;
@@ -163,6 +160,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     if (request.message === 'Track button clicked') {
 
+        let url = request.url;
+        console.log('The url is ' + url);
         let entryValue = [];
 
         // creates date string and pushes it onto entryValue array
@@ -182,7 +181,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             area: {
                 selectorStr: document.querySelectorAll('.hardfact')[1].textContent,
                 getSubStr: function() {
-                    return this.selectorStr.substr(0, this.selectorStr.indexOf(' '));
+                    return this.selectorStr.substr(1, this.selectorStr.indexOf(' ') - 1);
                 },
                 getValue: function() {
                     return this.getSubStr();
@@ -208,6 +207,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     } else {
                         return 'Auf Anfrage';
                     }
+                }
+            },
+            header: {
+                selectorStr: document.getElementsByTagName('h1')[0].textContent,
+                getValue: function() {
+                    return this.selectorStr;
+                }
+            },
+            image: {
+                srcStr:  document.querySelector('div.carousel-item.activeCarouselItem img').src,
+                getValue: function() {
+                    return this.srcStr;
+                }
+            },
+            url: {
+                urlStr: url,
+                getValue: function() {
+                    return this.urlStr;
                 }
             }
         };

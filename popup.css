@@ -1,7 +1,29 @@
 body {
-    width: 350px;
+    width: 800px;
 }
 
 ul {
     list-style-type: none;
+}
+
+img {
+    width: 40%;
+    height: auto;
+}
+ 
+.container {
+    display: flex;
+}
+
+.container > div {
+    flex: 1;
+}
+
+.imgDiv {
+}
+
+.txtDiv {
+}
+
+.btnDiv {
 }
