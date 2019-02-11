@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             let itemDiv = document.createElement('div');
                             itemDiv.classList.add('container');
 
-                            // creates a div for the image and append it to the apartment div
+                            // creates a div for the image and appends it to the apartment div
                             let imgDiv = document.createElement('div');
                             let itemImage = document.createElement('img');
                             itemImage.src = item[6];
@@ -182,46 +182,55 @@ document.addEventListener("DOMContentLoaded", function() {
                             console.log('makeDate(duplicates[0][0]) is ' + makeDate(duplicates[0][0]));
                             console.log('typeof makeDate(duplicates[0][0]) is ' + typeof makeDate(duplicates[0][0]));
 
-                            // creates an array containing only the dates of the elements in the duplicates array
+                            // creates an array containing only the dates of the elements of the duplicates array
                             let datesArray = duplicates.map(function(duplicate) {
                                 return makeDate(duplicate[0]);
                             });
                             console.log('datesArray is ' + datesArray);
+                            console.log('The length of datesArray is ' + datesArray.length);
+                            // sorts the datesArray by date, starting with most recent
+                            let sortedDatesArray = datesArray.sort(function(a, b) {
+                                if (a > b) {
+                                    return -1;
+                                } else if (a < b) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            });
+                            console.log('The sorted datesArray is ' + sortedDatesArray);
+                            console.log('The length of the sorted datesArray is ' + sortedDatesArray.length);
 
-                            // finds the latest date in datesArray
-                            let latest = new Date(Math.max.apply(null, datesArray));
-                            console.log('latest is ' + latest);
-                            console.log('new Date(latest) is ' + new Date(latest));
+                            let latestDate = sortedDatesArray[0];
 
-                            // finds the date immediately before the latest
-                            let index = datesArray.indexOf(latest);
-                            let datesMinusLatestArray = datesArray.splice(index, 1);
-                            let before = new Date(Math.max.apply(null, datesMinusLatestArray));
-                            console.log('before is ' + before);
-
-                            // to find the entries that correspond to these dates, we first need to
-                            // convert the dates back to strings
-                            let latestStr = makeDateStr(latest);
-                            let beforeStr = makeDateStr(before);
-                            console.log('makeDateStr(latest) is ' + makeDateStr(latest));
-                            console.log('makeDateStr(before) is ' + makeDateStr(before));
+                            // to find the entry that corresponds to this date, we need to
+                            // convert the date back to a string
+                            let latestDateStr = makeDateStr(latestDate);
+                            console.log('latestDateStr is ' + makeDateStr(latestDate));
 
                             // gets the price strings for the relevant entries
-                            let latestPriceStr = result[latestStr][4];
-                            let beforePriceStr = result[beforeStr][4];
+                            let latestPriceStr = result[latestDateStr][4];
 
-                            // appends a Euro symbol to the price strings that start with a digit
+                            // appends Euro symbol to price string if price string starts  with a digit
                             if (!isNaN(parseInt(latestPriceStr[0], 10))) {
                                 latestPriceStr += ' \u20AC';
                             }
-                            if (!isNaN(parseInt(beforePriceStr[0], 10))) {
-                                beforePriceStr += ' \u20AC';
-                            }
-
+                            
                             // creates a date-price list 
                             let priceList = document.createElement('ul');
-                            let htmlStr = '<li>' + beforeStr + ' -- ' + beforePriceStr + '</li>';
-                            htmlStr += '<li>' + latestStr + ' -- ' + latestPriceStr + '</li>';
+                            let htmlStr = '';
+
+                            if (sortedDatesArray.length > 1) {
+                                let previousDate = sortedDatesArray[1];
+                                let previousDateStr = makeDateStr(previousDate);
+                                let previousPriceStr = result[previousDateStr][4];
+                                if (!isNaN(parseInt(previousPriceStr[0], 10))) {
+                                    previousPriceStr += ' \u20AC';
+                                }
+                                htmlStr += '<li>' + previousDateStr + ' -- ' + previousPriceStr + '</li>';
+                            }
+
+                            htmlStr += '<li>' + latestDateStr + ' -- ' + latestPriceStr + '</li>';
                             priceList.innerHTML = htmlStr;
 
                             // appends header and price list to text div
@@ -234,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             // creates a div for the buttons
                             let btnDiv = document.createElement('div');
                             
-                            // creates 'Delete' button and append it to button div
+                            // creates 'Delete' button and appends it to button div
                             let delBtn = document.createElement('button');
                             let delTxt = document.createTextNode('Delete');
                             delBtn.appendChild(delTxt);

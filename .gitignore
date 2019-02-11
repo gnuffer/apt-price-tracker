@@ -1,5 +1,8 @@
 # swap files
 *.swp
 
+# vim session
+Session.vim
+
 # jQuery
 jquery-3.3.1.min.js
