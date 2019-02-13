@@ -134,6 +134,7 @@ document.addEventListener("DOMContentLoaded", function() {
             trackButton.hidden = true;
 
             trackedButton.addEventListener('click', function() {
+                trackedButton.hidden = true;
                 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                     // retrieves everything stored in chrome storage (the entire storage object)
                     chrome.storage.local.get(null, function(result) {
@@ -145,8 +146,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         let uniqResults = removeDuplicatesFrom(storageResults);
                         console.log('uniqResults are ' + uniqResults);
 
-                        // creates a div for the entire list of tracked apartments
-                        let listeDiv = document.getElementById('listeDiv');
+                        let body = document.getElementsByTagName('body')[0];
                             
                         uniqResults.forEach(function(item) {
 
@@ -245,6 +245,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             
                             // creates 'Delete' button and appends it to button div
                             let delBtn = document.createElement('button');
+                            delBtn.classList.add('delBtn');
                             let delTxt = document.createTextNode('Delete');
                             delBtn.appendChild(delTxt);
                             btnDiv.appendChild(delBtn);
@@ -262,6 +263,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                             //creates 'Details' button and appends it to button div
                             let dtlsBtn = document.createElement('button');
+                            dtlsBtn.classList.add('dtlsBtn');
                             let dtlsTxt = document.createTextNode('Details');
                             dtlsBtn.appendChild(dtlsTxt);
                             btnDiv.appendChild(dtlsBtn);
@@ -275,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             itemDiv.appendChild(btnDiv);
 
                             // appends apartment div to list div
-                            listeDiv.appendChild(itemDiv);
+                            body.appendChild(itemDiv);
                         });
                     });
                 });

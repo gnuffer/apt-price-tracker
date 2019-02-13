@@ -7,7 +7,7 @@ ul {
 }
 
 img {
-    width: 40%;
+    width: 80%;
     height: auto;
 }
  
@@ -17,6 +17,7 @@ img {
 
 .container > div {
     flex: 1;
+    position: relative;
 }
 
 .imgDiv {
@@ -26,4 +27,16 @@ img {
 }
 
 .btnDiv {
+}
+
+.delBtn {
+    position: absolute;
+    top: 20;
+    right: 40;
+}
+
+.dtlsBtn {
+    position: absolute;
+    bottom: 20;
+    right: 40;
 }
