@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         // checks if current page shows expose of a single apartment only
         if(tabs[0].url.indexOf('expose') > -1) {
-            console.log('You are looking at an expose');
+
             let url = tabs[0].url;
 
             // hides trackedButton (perhaps use elem.classlist.add('className') or elem.classList.remove('className')?)
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
           // checks if current page lists search results
         } else if (tabs[0].url.indexOf('liste') > -1) {
-            // hides trackButton (perhaps use elem.classlist.add('className') or elem.classList.remove('className')?)
+            // hides trackButton
             trackButton.hidden = true;
 
             trackedButton.addEventListener('click', function() {
@@ -144,7 +144,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
 
                         let uniqResults = removeDuplicatesFrom(storageResults);
-                        console.log('uniqResults are ' + uniqResults);
 
                         let body = document.getElementsByTagName('body')[0];
                             
@@ -176,18 +175,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                     duplicates.push(entry);
                                 }
                             });
-                            console.log('duplicates is: ' + duplicates);
-                            console.log('duplicates[0][0] is ' + duplicates[0][0]);
-                            console.log('typeof duplicates[0][0] is ' + typeof duplicates[0][0]);
-                            console.log('makeDate(duplicates[0][0]) is ' + makeDate(duplicates[0][0]));
-                            console.log('typeof makeDate(duplicates[0][0]) is ' + typeof makeDate(duplicates[0][0]));
 
                             // creates an array containing only the dates of the elements of the duplicates array
                             let datesArray = duplicates.map(function(duplicate) {
                                 return makeDate(duplicate[0]);
                             });
-                            console.log('datesArray is ' + datesArray);
-                            console.log('The length of datesArray is ' + datesArray.length);
+
                             // sorts the datesArray by date, starting with most recent
                             let sortedDatesArray = datesArray.sort(function(a, b) {
                                 if (a > b) {
@@ -198,15 +191,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                     return 0;
                                 }
                             });
-                            console.log('The sorted datesArray is ' + sortedDatesArray);
-                            console.log('The length of the sorted datesArray is ' + sortedDatesArray.length);
 
                             let latestDate = sortedDatesArray[0];
 
                             // to find the entry that corresponds to this date, we need to
                             // convert the date back to a string
                             let latestDateStr = makeDateStr(latestDate);
-                            console.log('latestDateStr is ' + makeDateStr(latestDate));
 
                             // gets the price strings for the relevant entries
                             let latestPriceStr = result[latestDateStr][4];

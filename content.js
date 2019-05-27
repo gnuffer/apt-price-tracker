@@ -113,9 +113,6 @@ window.onload = function() {
         let storageResults = [];
 
         if (result && typeof result === 'object') {
-            // inspect result object retrieved from storage
-            console.log('Retrieved from storage: ' + result);
-            console.log('Retrieved from storage and stringified: ' + JSON.stringify(result));
             // stores the property values of the result object in the storageResults array
             for (let date in result) {
                 storageResults.push(result[date]);
@@ -125,13 +122,6 @@ window.onload = function() {
         }
 
         let storageLength = storageResults.length;
-
-        // inspect storageLength
-        console.log('storageLength is ' + storageLength);
-        // inspect storageResults
-        console.log('The stringified storageResults are ' + JSON.stringify(storageResults));
-        // inspect searchResults
-        console.log('The stringified searchResults are ' + JSON.stringify(searchResults));
 
         // checks, for each apartment in searchResults, whether it is also in storageResults.  If so, it pushes its index onto the myItems array.
         let myItems = [];
@@ -144,9 +134,6 @@ window.onload = function() {
                 }
             });
         });
-
-        // inspect myItems array
-        console.log('The items in searchResults that are also in storageResults have one of the indices in ' + JSON.stringify(myItems));
 
         // highlights the search results with index in myItems on the search results page
         myItems.forEach(function(index) {
@@ -161,7 +148,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.message === 'Track button clicked') {
 
         let url = request.url;
-        console.log('The url is ' + url);
         let entryValue = [];
 
         // creates date string and pushes it onto entryValue array
@@ -243,8 +229,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         chrome.storage.local.set(entry, function() {
             console.log('The new entry is: ' + entryValue);
         });
-
-        console.log(dateStr);
 
         // sends message object with current date back to popup.js
         sendResponse({currentDate: dateStr});
